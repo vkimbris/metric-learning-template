@@ -1,7 +1,7 @@
 constant:
   codedir: src
   path:
-    data: data/small_data.parquet
+    data: data/data.parquet
     model: models/charcs-mapper
     metrics:
       per_label: metrics/metrics.json
@@ -41,6 +41,7 @@ train:
     model_name_or_path: intfloat/multilingual-e5-small
     prompts:
       query: 'query: '
+      passage: 'passage: '
     default_prompt_name: query
   loss:
     _target_: sentence_transformers.losses.MultipleNegativesRankingLoss
@@ -48,7 +49,7 @@ train:
     _target_: utils.evaluators.MappingEvaluator
     compute_metrics_fn:
       _target_: utils.evaluators.compute_precision_recall_f_beta_score
-      beta: 0.5
+      beta: 2
   args:
     _target_: sentence_transformers.SentenceTransformerTrainingArguments
     do_train: true
@@ -66,4 +67,4 @@ evaluate:
     _target_: utils.evaluators.MappingEvaluator
     compute_metrics_fn:
       _target_: utils.evaluators.compute_precision_recall_f_beta_score
-      beta: 0.5
+      beta: 2

@@ -5,7 +5,7 @@ hydra:
 
 defaults:
   - _self_
-  - constant: small-data
+  - constant: full-data
 
   - split: random
   - negative_sampling: masked-hard

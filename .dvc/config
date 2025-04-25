@@ -1,5 +1,7 @@
 [core]
     remote = storage
+[hydra]
+    enabled = True
 ['remote "storage"']
     url = s3://hacks/templates/metric-learning/
     endpointurl = https://storage.yandexcloud.net

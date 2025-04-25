@@ -3,19 +3,19 @@ stages:
   split:
     cmd: python src/split.py
     deps:
-    - path: data/small_data.parquet
+    - path: data/data.parquet
       hash: md5
-      md5: 045e83dfe10698aa3baae365f9eb7ecd
-      size: 11703100
+      md5: cd5777d15a7f6de6dbe9faeb565bb730
+      size: 1425743
     - path: src/split.py
       hash: md5
       md5: 0fd57d6386cc649751fca4edaf3cf2c7
       size: 983
     - path: src/utils/splitters/
       hash: md5
-      md5: 862a64795753bfc2edb2f42d6dccedfc.dir
-      size: 19988
-      nfiles: 19
+      md5: e708c50e2994a8b98cdd65b2311df30b.dir
+      size: 18581
+      nfiles: 18
     params:
       params.yaml:
         split:
@@ -27,16 +27,16 @@ stages:
     outs:
     - path: artifacts/dataset
       hash: md5
-      md5: e54195642060f9bf4b1585e8ce6f2c51.dir
-      size: 29087282
+      md5: 2190f5676cf8633f2aefe53751e22373.dir
+      size: 4712242
       nfiles: 10
   negative_sampling:
     cmd: python src/negative_sampling.py
     deps:
     - path: artifacts/dataset
       hash: md5
-      md5: e54195642060f9bf4b1585e8ce6f2c51.dir
-      size: 29087282
+      md5: 2190f5676cf8633f2aefe53751e22373.dir
+      size: 4712242
       nfiles: 10
     - path: src/negative_sampling.py
       hash: md5
@@ -44,9 +44,9 @@ stages:
       size: 898
     - path: src/utils/negative_samplers/
       hash: md5
-      md5: e25c58bd9f0a260b4c2342744cae0ec4.dir
-      size: 24166
-      nfiles: 14
+      md5: 7297017a2c0e8df8ec9a5dd5f2daf7c7.dir
+      size: 18140
+      nfiles: 12
     params:
       params.yaml:
         negative_sampling:
@@ -67,16 +67,16 @@ stages:
     outs:
     - path: artifacts/dataset_with_negatives
       hash: md5
-      md5: f68f35e5c4190de4437074a27d43781b.dir
-      size: 28116643
+      md5: 6601a0cd5d73682b42be14f235c64f22.dir
+      size: 8841699
       nfiles: 10
   train:
     cmd: python src/train.py
     deps:
     - path: artifacts/dataset_with_negatives
       hash: md5
-      md5: f68f35e5c4190de4437074a27d43781b.dir
-      size: 28116643
+      md5: 6601a0cd5d73682b42be14f235c64f22.dir
+      size: 8841699
       nfiles: 10
     - path: src/train.py
       hash: md5
@@ -84,9 +84,9 @@ stages:
       size: 2286
     - path: src/utils/evaluators/
       hash: md5
-      md5: f467c9b99c1597ceb2a4058e23554ec4.dir
-      size: 35645
-      nfiles: 8
+      md5: 6523acd2f4d3e206c0d732d7a7d73179.dir
+      size: 21774
+      nfiles: 6
     params:
       params.yaml:
         train:
@@ -95,6 +95,7 @@ stages:
             model_name_or_path: intfloat/multilingual-e5-small
             prompts:
               query: 'query: '
+              passage: 'passage: '
             default_prompt_name: query
           loss:
             _target_: sentence_transformers.losses.MultipleNegativesRankingLoss
@@ -102,7 +103,7 @@ stages:
             _target_: utils.evaluators.MappingEvaluator
             compute_metrics_fn:
               _target_: utils.evaluators.compute_precision_recall_f_beta_score
-              beta: 0.5
+              beta: 2
           args:
             _target_: sentence_transformers.SentenceTransformerTrainingArguments
             do_train: true
@@ -118,31 +119,31 @@ stages:
     outs:
     - path: artifacts/trainer
       hash: md5
-      md5: e13350259668d0084b40e466a377a741.dir
-      size: 1428095682
+      md5: 569c952954b49a8d907a431f64325802.dir
+      size: 1428022978
       nfiles: 16
     - path: models/charcs-mapper
       hash: md5
-      md5: 0f5343157a07a6984553cc8b335ee297.dir
-      size: 487738779
+      md5: 9ad7a1aa8ddf303f0f63c509ad835e2b.dir
+      size: 487787589
       nfiles: 10
   evaluate:
     cmd: python src/evaluate.py
     deps:
     - path: artifacts/dataset
       hash: md5
-      md5: e54195642060f9bf4b1585e8ce6f2c51.dir
-      size: 29087282
+      md5: 2190f5676cf8633f2aefe53751e22373.dir
+      size: 4712242
       nfiles: 10
     - path: artifacts/trainer
       hash: md5
-      md5: 57f30390bb677d64da0f77ea625ac6a1.dir
-      size: 1428141702
+      md5: 569c952954b49a8d907a431f64325802.dir
+      size: 1428022978
       nfiles: 16
     - path: models/charcs-mapper
       hash: md5
-      md5: 0f5343157a07a6984553cc8b335ee297.dir
-      size: 487738779
+      md5: 9ad7a1aa8ddf303f0f63c509ad835e2b.dir
+      size: 487787589
       nfiles: 10
     - path: src/evaluate.py
       hash: md5
@@ -150,9 +151,9 @@ stages:
       size: 2026
     - path: src/utils/evaluators/
       hash: md5
-      md5: f467c9b99c1597ceb2a4058e23554ec4.dir
-      size: 35645
-      nfiles: 8
+      md5: 6523acd2f4d3e206c0d732d7a7d73179.dir
+      size: 21774
+      nfiles: 6
     params:
       params.yaml:
         evaluate:
@@ -160,13 +161,13 @@ stages:
             _target_: utils.evaluators.MappingEvaluator
             compute_metrics_fn:
               _target_: utils.evaluators.compute_precision_recall_f_beta_score
-              beta: 0.5
+              beta: 2
     outs:
     - path: metrics/aggregated_metrics.json
       hash: md5
-      md5: c2b522061c477108f55c76de1df7a8ec
-      size: 112
+      md5: f3e1927e9557b02523297a14b2bbd8b9
+      size: 95
     - path: metrics/metrics.json
       hash: md5
-      md5: 77472beff2118018fe54a35acaaebcca
-      size: 34699
+      md5: 552053833536a80d958c13df6fa9e571
+      size: 130

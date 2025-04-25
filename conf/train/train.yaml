@@ -3,6 +3,7 @@ model:
   model_name_or_path: intfloat/multilingual-e5-small
   prompts:
     query: "query: "
+    passage: "passage: "
   default_prompt_name: query
   
 loss:
@@ -12,7 +13,7 @@ evaluator:
   _target_: utils.evaluators.MappingEvaluator
   compute_metrics_fn:
     _target_: utils.evaluators.compute_precision_recall_f_beta_score
-    beta: 0.5
+    beta: 2
 
 args:
   _target_: sentence_transformers.SentenceTransformerTrainingArguments
