@@ -1,0 +1,16 @@
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
+
+defaults:
+  - _self_
+  - constant: small-data
+
+  - split: random
+  - negative_sampling: masked-hard
+  - train: train
+  - evaluate: evaluate
+
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled 

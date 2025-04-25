@@ -1,0 +1,5 @@
+_target_: utils.splitters.RandomSplitter
+add_validation: True
+stratify: charcName
+test_size: 0.1
+random_state: 21

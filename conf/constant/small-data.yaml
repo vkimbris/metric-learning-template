@@ -1,0 +1,21 @@
+codedir: src
+
+path:
+  data: data/small_data.parquet
+  model: models/charcs-mapper
+  
+  metrics:
+    per_label: metrics/metrics.json
+    aggregated: metrics/aggregated_metrics.json
+  
+  artifacts:
+    dataset: artifacts/dataset
+    dataset_with_negatives: artifacts/dataset_with_negatives
+
+    trainer: artifacts/trainer
+  
+
+dataset_columns_mapping:
+  name: anchor
+  mappedName: positive
+  charcName: label

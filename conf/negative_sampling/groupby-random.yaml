@@ -1,0 +1,7 @@
+_target_: utils.negative_samplers.GroupByNegativeSampler
+by: label
+sampler:
+  _target_: utils.negative_samplers.RandomNegativeSampler
+  n_negatives: 1
+  as_triplets: True
+  random_state: 42

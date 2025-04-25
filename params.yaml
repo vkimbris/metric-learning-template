@@ -1,0 +1,69 @@
+constant:
+  codedir: src
+  path:
+    data: data/small_data.parquet
+    model: models/charcs-mapper
+    metrics:
+      per_label: metrics/metrics.json
+      aggregated: metrics/aggregated_metrics.json
+    artifacts:
+      dataset: artifacts/dataset
+      dataset_with_negatives: artifacts/dataset_with_negatives
+      trainer: artifacts/trainer
+  dataset_columns_mapping:
+    name: anchor
+    mappedName: positive
+    charcName: label
+split:
+  _target_: utils.splitters.RandomSplitter
+  add_validation: true
+  stratify: charcName
+  test_size: 0.1
+  random_state: 21
+negative_sampling:
+  _target_: utils.negative_samplers.MaskedHardNegativeSampler
+  model:
+    _target_: sentence_transformers.SentenceTransformer
+    model_name_or_path: intfloat/multilingual-e5-small
+    prompts:
+      query: 'query: '
+    default_prompt_name: query
+  n_negatives: 1
+  as_triplets: true
+  model_encoding_params:
+    batch_size: 1024
+  masked_semantic_search_params:
+    verbose: true
+    query_chunk_size: 10000
+train:
+  model:
+    _target_: sentence_transformers.SentenceTransformer
+    model_name_or_path: intfloat/multilingual-e5-small
+    prompts:
+      query: 'query: '
+    default_prompt_name: query
+  loss:
+    _target_: sentence_transformers.losses.MultipleNegativesRankingLoss
+  evaluator:
+    _target_: utils.evaluators.MappingEvaluator
+    compute_metrics_fn:
+      _target_: utils.evaluators.compute_precision_recall_f_beta_score
+      beta: 0.5
+  args:
+    _target_: sentence_transformers.SentenceTransformerTrainingArguments
+    do_train: true
+    num_train_epochs: 3
+    eval_strategy: epoch
+    save_strategy: epoch
+    per_device_train_batch_size: 256
+    learning_rate: 0.0002
+    seed: 21
+    warmup_steps: 20
+    save_total_limit: 1
+    metric_for_best_model: f_score
+evaluate:
+  evaluator:
+    _target_: utils.evaluators.MappingEvaluator
+    compute_metrics_fn:
+      _target_: utils.evaluators.compute_precision_recall_f_beta_score
+      beta: 0.5

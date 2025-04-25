@@ -1,0 +1,56 @@
+metrics:
+  - ${constant.path.metrics.aggregated}
+
+stages:
+  split:
+    cmd: python ${constant.codedir}/split.py
+    deps:
+      - ${constant.path.data}
+
+      - ${constant.codedir}/split.py
+      - ${constant.codedir}/utils/splitters/
+    params:
+      - split
+    outs:
+      - ${constant.path.artifacts.dataset}
+
+  negative_sampling:
+    cmd: python ${constant.codedir}/negative_sampling.py
+    deps:
+      - ${constant.path.artifacts.dataset}
+
+      - ${constant.codedir}/negative_sampling.py
+      - ${constant.codedir}/utils/negative_samplers/
+    params:
+      - negative_sampling
+    outs:
+      - ${constant.path.artifacts.dataset_with_negatives}
+
+  train:
+    cmd: python ${constant.codedir}/train.py
+    deps:
+      - ${constant.path.artifacts.dataset_with_negatives}
+
+      - ${constant.codedir}/train.py
+      - ${constant.codedir}/utils/evaluators/
+    params:
+      - train
+    outs:
+      - ${constant.path.artifacts.trainer}
+      - ${constant.path.model}
+
+  evaluate:
+    cmd: python ${constant.codedir}/evaluate.py
+    deps:
+      - ${constant.path.artifacts.dataset}
+      - ${constant.path.artifacts.trainer}
+      - ${constant.path.model}
+
+      - ${constant.codedir}/evaluate.py
+      - ${constant.codedir}/utils/evaluators/
+    params:
+      - evaluate
+    outs:
+      - ${constant.path.metrics.per_label}
+      - ${constant.path.metrics.aggregated}
+    

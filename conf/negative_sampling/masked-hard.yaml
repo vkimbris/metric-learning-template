@@ -1,0 +1,14 @@
+_target_: utils.negative_samplers.MaskedHardNegativeSampler
+model:
+  _target_: sentence_transformers.SentenceTransformer
+  model_name_or_path: intfloat/multilingual-e5-small
+  prompts:
+    query: "query: "
+  default_prompt_name: query
+n_negatives: 1
+as_triplets: True
+model_encoding_params:
+  batch_size: 1024
+masked_semantic_search_params:
+  verbose: True
+  query_chunk_size: 10000

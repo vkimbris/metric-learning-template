@@ -1,0 +1,24 @@
+_target_: utils.splitters.GroupBySplitter
+by: charcName
+splitter:
+  _target_: utils.splitters.ConditionalSplitter
+  major_splitter:
+    _target_: utils.splitters.SequentialSplitter
+    splitters:
+      - _target_: utils.splitters.LabelsSplitter
+        label_column: mappedName
+        test_size: 0.1
+        name: unseen_standard
+      - _target_: utils.splitters.RandomSplitter
+        random_state: 21
+        test_size: 0.1
+        name: unseen_pair
+  minor_splitter:
+    _target_: utils.splitters.RandomSplitter
+    random_state: 21
+    test_size: 0.1
+    name: unseen_pair
+  selector:
+    _target_: utils.splitters.conditional.ThresholdSelector
+    threshold: 10
+    column: mappedName
